@@ -1,8 +1,13 @@
 
+int main(int argc, char **argv){
+  p_caller();
+  p_caller2(argc);
+}
 int arg_tainter_basic_test()
 {
   struct myVar;
   memset(myVar, 0, sizeof(myVar));
+  p_caller();
 }
 
 int interproc_arg_tainter_test()
@@ -55,9 +60,9 @@ int p_caller()
   two_arg_sink_caller_p(a,b);
 }
 
-int p_caller2()
+int p_caller2(int a)
 {
-  int a = sourceA();
+  //int a = sourceA();
   int b = sourceB();
   if(b == 0) return;
   
@@ -66,5 +71,7 @@ int p_caller2()
 
 int two_arg_sink_caller_p(int x, int y)
 {
-  asink(x,y);
+  int x1 = x+fun(y);//这个statement“use”了三个符号x,fun,y;定义了一个符号x1。
+  asink(x1,y);
+
 }

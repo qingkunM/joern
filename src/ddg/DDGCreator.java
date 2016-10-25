@@ -54,10 +54,10 @@ public class DDGCreator
 	private void calculateReachingDefs()
 	{
 		initReachingDefs();
-
+		//changedNodes是cfg中所有的statements，这里的cfg类型是DefUseCFG
 		while (!changedNodes.isEmpty())
 		{
-
+			//pop出一个statement。那这里的currentBlock是statement？
 			Object currentBlock = popFromChangedNodes();
 
 			updateIn(currentBlock);
@@ -80,7 +80,9 @@ public class DDGCreator
 
 	private void initReachingDefs()
 	{
+		//将每个statement的def symbols构成一个<statement，definition>对放入out中
 		initOut();
+		//将out中的数据添加到gen中来
 		initGenFromOut();
 		changedNodes = new HashSet<Object>();
 		changedNodes.addAll(cfg.getStatements());
@@ -100,7 +102,7 @@ public class DDGCreator
 
 			// this has the nice side-effect that an
 			// empty hash is created for the statement.
-
+			//将statement对应的设置为一个空对象
 			out.removeAllForKey(statement);
 
 			List<Object> symsDefined = cfg.getSymbolsDefined().getListForKey(
@@ -115,7 +117,7 @@ public class DDGCreator
 			}
 		}
 	}
-
+	//将out中的数据添加到gen中来
 	private void initGenFromOut()
 	{
 		for (Object statement : cfg.getStatements())

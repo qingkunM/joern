@@ -1,19 +1,17 @@
 package outputModules.neo4j.importers;
 
-import neo4j.batchInserter.Neo4JBatchInserter;
-
 import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.RelationshipType;
 
 import ast.ASTNode;
 import ast.functionDef.FunctionDef;
-import ast.statements.CompoundStatement;
 import cfg.CFG;
 import cfg.nodes.ASTNodeContainer;
 import cfg.nodes.CFGNode;
 import databaseNodes.EdgeTypes;
 import databaseNodes.FileDatabaseNode;
 import databaseNodes.FunctionDatabaseNode;
+import neo4j.batchInserter.Neo4JBatchInserter;
 
 // Stays alive while importing a function into
 // the database
@@ -33,6 +31,7 @@ public class FunctionImporter extends ASTNodeImporter
 			FunctionDatabaseNode function = new FunctionDatabaseNode();
 			// this actually constructs all other representations of
 			// the function.
+			function.curFile = curFile;
 			function.initialize(node);
 			addFunctionToDatabase(function);
 			linkFunctionToFileNode(function, curFile);

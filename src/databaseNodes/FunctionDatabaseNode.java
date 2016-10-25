@@ -16,6 +16,7 @@ import ddg.CFGAndUDGToDefUseCFG;
 import ddg.DDGCreator;
 import ddg.DataDependenceGraph.DDG;
 import ddg.DefUseCFG.DefUseCFG;
+import parsing.C.PointerOps.CPointerOpParsing;
 
 // Note: we currently use the FunctionDatabaseNode
 // as a container for the Function. That's not very
@@ -37,11 +38,26 @@ public class FunctionDatabaseNode extends DatabaseNode
 	CFGAndUDGToDefUseCFG udgAndCfgToDefUseCFG = new CFGAndUDGToDefUseCFG();
 	DDGCreator ddgCreator = new DDGCreator();
 	CDGCreator cdgCreator = new CDGCreator();
+	//start mqk
+	public FileDatabaseNode curFile; //获取函数所属文件
+	//end mqk
 
 	@Override
 	public void initialize(Object node)
 	{
 		astRoot = (FunctionDef) node;
+		//start mqk
+		CPointerOpParsing cOpP = new CPointerOpParsing();
+		try{
+			cOpP.findSink(astRoot);
+			cOpP.parsingAST(astRoot);
+			cOpP.saveCulOp(astRoot,curFile);
+		}catch(RuntimeException e){
+			e.printStackTrace();
+			return;
+		}
+		//cOpP.findArrayIndexVariable(astRoot);
+		//end mqk
 		cfg = astToCFG.convert(astRoot);
 		udg = cfgToUDG.convert(cfg);
 		DefUseCFG defUseCFG = udgAndCfgToDefUseCFG.convert(cfg, udg);

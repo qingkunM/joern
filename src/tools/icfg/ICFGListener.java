@@ -5,6 +5,8 @@ import java.util.List;
 
 import neo4j.batchInserter.ImportedNodeListener;
 import neo4j.batchInserter.Neo4JBatchInserter;
+import neo4j.readWriteDB.Neo4JDBInterface;
+import utils.Utils;
 
 import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.RelationshipType;
@@ -17,18 +19,18 @@ public class ICFGListener extends ImportedNodeListener
 {
 
 	CallResolver resolver = new CallResolver();
-
+	
 	@Override
 	public void visitNode(Long callNodeId)
 	{
 		List<Long> arguments = getArgumentsByCallId(callNodeId);
 		if (arguments == null)
 			return;
-
+		//获取的是Function的node Id而不是CallExpression的node Id
 		IndexHits<Long> dstIds = resolver.resolveByCallId(callNodeId);
 		if (dstIds == null)
 			return;
-
+		//没运行一次就会增加一条边，没有查重，注意此方法只能运行一次，不然会有重复。
 		connectArgumentsToDestinations(callNodeId, arguments, dstIds);
 	}
 
@@ -52,8 +54,8 @@ public class ICFGListener extends ImportedNodeListener
 			addArgParamEdges(callNodeId, arguments, parameters);
 		}
 	}
-
-	private List<Long> getParametersByFunctionId(Long dst)
+	//原本是private，因为在其他地方要使用，所以改成了public
+	public List<Long> getParametersByFunctionId(Long dst)
 	{
 
 		String query = "type:\"ParameterList\" AND functionId:\"" + dst + "\"";
@@ -79,10 +81,12 @@ public class ICFGListener extends ImportedNodeListener
 
 		RelationshipType rel = DynamicRelationshipType
 				.withName(EdgeTypes.IS_ARG);
-		for (int i = 0; i < arguments.size(); i++)
+		for (int i = 0; i < arguments.size(); i++){
 			Neo4JBatchInserter.addRelationship(arguments.get(i),
 					parameters.get(i), rel, null);
-
+			Utils.print("argument Id : "+arguments.get(i));
+			Utils.print("parameter Id : "+parameters.get(i));
+		}
 	}
 
 	private List<Long> getArgsFromArgList(long argumentListId)
@@ -117,10 +121,12 @@ public class ICFGListener extends ImportedNodeListener
 
 		for (Long paramId : params)
 		{
+			Neo4JBatchInserter.printNodeCode(paramId);
 			Iterable<BatchRelationship> rels = Neo4JBatchInserter
 					.getRelationships(paramId);
 			for (BatchRelationship rel : rels)
 			{
+				Neo4JBatchInserter.printNodeCode(rel.getEndNode());
 				if (rel.getEndNode() == paramId)
 					continue;
 
@@ -145,6 +151,7 @@ public class ICFGListener extends ImportedNodeListener
 
 	private List<Long> getChildrenByNodeId(Long nodeId)
 	{
+		//Neo4JBatchInserter.printNodeCode(nodeId);
 		List<Long> retval = new LinkedList<Long>();
 		Iterable<BatchRelationship> rels = Neo4JBatchInserter
 				.getRelationships(nodeId);
@@ -154,6 +161,7 @@ public class ICFGListener extends ImportedNodeListener
 			if (rel.getEndNode() == nodeId)
 				continue;
 			long childId = rel.getEndNode();
+			//Neo4JBatchInserter.printNodeCode(childId);
 			retval.add(childId);
 		}
 		return retval;

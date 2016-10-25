@@ -25,13 +25,15 @@ public class ReadWriteDbFactory extends DefUseCFGFactory
 	public DefUseCFG create(Long funcId)
 	{
 		cfg = new DefUseCFG();
-		
+		//获取的是funcId对应函数的所有CFG节点并将id放在DefUseCFG对象的statesments属性中
 		getStatementsOfFunction(funcId);
+		//Use和Def分别对应的是两种边，将所有语句的id和code String分别放入symbolsUsed和symboldefined
 		getUsesAndDefs();
 		getParentBlocks();
 		getChildBlocks();
 		getExitNode(funcId);
 		getParameters(funcId);
+		//得出一个Map<objec, object>symbolsUsed的结果，表达的意思是exitnode使用了哪些symbol
 		cfg.addUsesForExitNode();
 		
 		return cfg;
@@ -61,9 +63,10 @@ public class ReadWriteDbFactory extends DefUseCFGFactory
 		}
 		
 	}
-
+	//讲functionId是funcId的函数的所有CFG语句都加入到cfg的Statements属性中
 	private void getStatementsOfFunction(Long funcId)
 	{
+		//获取的可能是ASTNode和CFGNode上层的FunctionDataBaseNode
 		String query = "isCFGNode:True AND functionId:" + funcId;
 		IndexHits<Node> hits = Neo4JDBInterface.queryIndex(query);
 		for (Node node : hits)
@@ -75,7 +78,7 @@ public class ReadWriteDbFactory extends DefUseCFGFactory
 		for (Object obj : cfg.getStatements())
 		{
 			Long statementId = (Long) obj;
-
+			//获取的是statementId节点对应的孩子节点，该孩子节点和statementId节点用一条USE边连接
 			List<Pair<Long, String>> used = Traversals
 					.getSymbolsUsedByStatement(statementId);
 			for (Pair<Long, String> symbolIdAndCode : used)

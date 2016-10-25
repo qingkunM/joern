@@ -14,7 +14,7 @@ public class ICFGMain extends GraphDbWalker
 	static ImportedNodeListener listener = new ICFGListener();
 
 	private static ICFGCommandLineInterface cmd = new ICFGCommandLineInterface();
-
+	//icfg之间边没有经过查重，所以只能运行一次
 	public static void main(String[] args)
 	{
 		parseCommandLine(args);

@@ -40,6 +40,7 @@ public class ArgumentTainter
 
 	public void patch()
 	{
+		//确定可疑函数并把结果放在functionsToPatch中
 		determineFunctionsToPatch(source);	
 		
 		for (Long funcId : functionsToPatch)

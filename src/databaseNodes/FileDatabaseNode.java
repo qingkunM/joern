@@ -10,7 +10,9 @@ public class FileDatabaseNode extends DatabaseNode
 	long neo4jId = -1;
 	private String pathString;
 	private String type;
-
+	public String getPathString(){
+		return pathString;
+	}
 	public void setType(String aType)
 	{
 		type = aType;

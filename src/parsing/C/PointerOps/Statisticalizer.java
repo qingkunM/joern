@@ -4,10 +4,23 @@ public class Statisticalizer {
 	public String identifier;
 	public String type; //pointer or array
 	public int opIncDec=0, opMul=0, opCall=0, opCast=0, opIncDecLoop=0, opMulLoop=0, opCallLoop=0, opCastLoop=0, opIncDecCondition=0, opMulCondition=0, opCallCondition=0, opCastCondition=0;
-	public int loop=0, condition=0;
+	public int maxLoopNum=0, maxConditionNum=0;
 	public static String IDENTIFIER="identifier", TYPE="type", OPINCDEC="opincdec", OPMUL="opmul", OPINCDECLOOP="opincdecloop", OPMULLOOP="opmulloop", OPCALL="opcall", OPCAST="opcast", CONDITION="condition", LOOP="loop",
-				  		 OPCALLLOOP="opcallloop", OPCASTLOOP="opcastloop", OPINCDECCONDITION="opincdeccondition", OPMULCONDITION="opmulcondition", OPCALLCONDITION="opcallcondition", OPCASTCONDITION="opcastcondition"; 
+				  		 OPCALLLOOP="opcallloop", OPCASTLOOP="opcastloop", OPINCDECCONDITION="opincdeccondition", OPMULCONDITION="opmulcondition", OPCALLCONDITION="opcallcondition", OPCASTCONDITION="opcastcondition",
+				  		 MAXLOOPNUM="maxloopnum", MAXCONDITIONNUM="maxconditionnum";
 	public static String POINTERTYPE="pointer", ARRAYTYPE="array";
+	public int getMaxLoopNum() {
+		return maxLoopNum;
+	}
+	public void setMaxLoopNum(int maxLoopNum) {
+		this.maxLoopNum = maxLoopNum;
+	}
+	public int getMaxConditionNum() {
+		return maxConditionNum;
+	}
+	public void setMaxConditionNum(int maxConditionNum) {
+		this.maxConditionNum = maxConditionNum;
+	}
 	public int total(){
 		int totalNum=0;
 		totalNum = opIncDec+opMul+opCall+opCast+opIncDecLoop+opMulLoop+opCallLoop+opCastLoop+opIncDecCondition+opMulCondition+opCallCondition+opCastCondition;
@@ -96,17 +109,5 @@ public class Statisticalizer {
 	}
 	public void setOpCast(int opCast) {
 		this.opCast = opCast;
-	}
-	public int getLoop() {
-		return loop;
-	}
-	public void setLoop(int loop) {
-		this.loop = loop;
-	}
-	public int getCondition() {
-		return condition;
-	}
-	public void setCondition(int condition) {
-		this.condition = condition;
 	}
 }

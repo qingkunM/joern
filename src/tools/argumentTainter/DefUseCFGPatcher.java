@@ -58,7 +58,7 @@ public class DefUseCFGPatcher
 		
 		this.defUseCFG = defUseCFG;
 		newlyAddedLinks.clear();
-
+		//statementsToPatch里面存放的是包含函数调用的statement
 		for (Node statement : statementsToPatch)
 		{
 			
@@ -87,6 +87,7 @@ public class DefUseCFGPatcher
 	{
 		for (UseOrDef newDef : newDefs)
 		{
+			//newDef中的symbol指的是什么？
 			if (oldDefs.contains(newDef.symbol))
 				continue;
 			if (!newDef.isDef)

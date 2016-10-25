@@ -27,6 +27,7 @@ import ast.expressions.ShiftExpression;
 import ast.expressions.UnaryExpression;
 import ast.expressions.UnaryOp;
 import ast.functionDef.FunctionDef;
+import ast.functionDef.ParameterList;
 import ast.statements.CompoundStatement;
 import ast.statements.ExpressionStatement;
 import ast.statements.ForInit;
@@ -45,7 +46,7 @@ public class CPointerOpParsing{
 	//数组变量和索引变量的map表
 	Map<String, String> var2Array = new HashMap<String, String>();
 	Alias alias = new Alias();
-	int loopNum=0, conditionNum=0;
+	int loopNum=0, conditionNum=0, maxLoopNum=0, maxConditionNum=0;
 	public String assArrayPattern="^.*\\[.*\\].*=.*", assPointerPattern="^\\*.*=.*";
 	public String identifierFromArgument="";
 	public void parsingAST(ASTNode node){
@@ -63,16 +64,19 @@ public class CPointerOpParsing{
 		for(int i=0; i<csnode.getChildCount(); i++){
 			if(csnode.getChild(i) instanceof IfStatement){
 				conditionNum++;
+				updateConditionNum(conditionNum);
 				parsingCompoundStatement4CulOp(csnode.getChild(i));
 				//parsingCompoundStatement4CulOp(csnode.getChild(i).getChild(csnode.getChild(i).getChildCount()-1));
 				conditionNum--;
 			}else if(csnode.getChild(i) instanceof ForStatement || csnode.getChild(i) instanceof WhileStatement){
 				loopNum++;
+				updateLoopNum(loopNum);
 				parsingCompoundStatement4CulOp(csnode.getChild(i));
 				//parsingCompoundStatement4CulOp(csnode.getChild(i).getChild(csnode.getChild(i).getChildCount()-1));
 				loopNum--;
 			}else if(csnode.getChild(i) instanceof SwitchStatement){
 				conditionNum++;
+				updateConditionNum(conditionNum);
 				parsingCompoundStatement4CulOp(csnode.getChild(i).getChild(1));
 				conditionNum--;
 			}else if(csnode.getChild(i) instanceof ExpressionStatement){
@@ -125,7 +129,10 @@ public class CPointerOpParsing{
 	}
 	public void findSink(ASTNode node){
 		if(node instanceof FunctionDef){
-			findPointerAndArrayFromParaList(node.getChild(2));
+			for(int i=0; i<node.getChildCount(); i++){
+				if(node.getChild(i) instanceof ParameterList)
+					findPointerAndArrayFromParaList(node.getChild(i));
+			}
 			if(node.getChild(0) instanceof CompoundStatement){
 				node = node.getChild(0);
 				findPointerAndArrayFromCompoundStatement(node);
@@ -644,7 +651,7 @@ public class CPointerOpParsing{
 			StringBuilder sb = new StringBuilder();
 			Statisticalizer tmp = new Statisticalizer();
 			sb.append(curFile.getPathString()+" : "+funName+"\n");
-			String filePath = "/home/mqk/git/joern/test/output/test";
+			String filePath = "/home/mqk/git/joern/test/output/libexif-0.6.20";
 			for(Map.Entry<String, Statisticalizer> entry : statMap.entrySet()){
 				//计算一个函数的统计数据
 				tmp.setOpIncDec(tmp.getOpIncDec()+entry.getValue().getOpIncDec());
@@ -678,6 +685,8 @@ public class CPointerOpParsing{
 //						"}\n";
 //				sb.append(str);
 			}
+			tmp.setMaxConditionNum(maxConditionNum);
+			tmp.setMaxLoopNum(maxLoopNum);
 			if(tmp.total()>0){
 				String str = "{"+
 						Statisticalizer.OPINCDEC+":"+tmp.getOpIncDec()+","+
@@ -691,7 +700,9 @@ public class CPointerOpParsing{
 						Statisticalizer.OPCALLLOOP +":"+ tmp.getOpCallLoop()+","+" "+
 						Statisticalizer.OPCAST +":"+ tmp.getOpCast()+","+" "+
 						Statisticalizer.OPCASTCONDITION+":"+ tmp.getOpCastCondition()+" "+
-						Statisticalizer.OPCASTLOOP+":"+ tmp.getOpCastLoop()+" "+
+						Statisticalizer.OPCASTLOOP+":"+ tmp.getOpCastLoop()+", "+
+						Statisticalizer.MAXCONDITIONNUM+":"+tmp.getMaxConditionNum()+", "+
+						Statisticalizer.MAXLOOPNUM+":"+tmp.getMaxLoopNum()+", "+
 						"}\n\n";
 				sb.append(str);
 				try {
@@ -708,6 +719,14 @@ public class CPointerOpParsing{
 				}
 			}
 		}
+	}
+	public void updateLoopNum(int curLoopNum){
+		if(curLoopNum>maxLoopNum)
+			maxLoopNum = curLoopNum;
+	}
+	public void updateConditionNum(int curConditionNum){
+		if(curConditionNum>maxConditionNum)
+			maxConditionNum = curConditionNum;
 	}
 	public void parsingUnary_expression(FunctionParser.Unary_expressionContext ctx, boolean loopOrNot){
 //		if(loopOrNot){

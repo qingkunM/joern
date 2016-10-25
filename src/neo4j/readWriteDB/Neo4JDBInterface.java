@@ -14,12 +14,13 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
+import utils.Utils;
+
 public class Neo4JDBInterface
 {
 
 	static GraphDatabaseService graphDb;
 	static Index<Node> nodeIndex;
-
 	static String databaseDir = "";
 
 	static Transaction tx;
@@ -88,6 +89,18 @@ public class Neo4JDBInterface
 	{
 		return graphDb.getNodeById(nodeId);
 	}
+	//由id打印出node code
+	public static void printNodeCodeById(Long nodeId){
+		Map<String, String> conf = ConfigurationGenerator
+				.generateConfiguration();
+		graphDb = new GraphDatabaseFactory()
+				.newEmbeddedDatabaseBuilder(".joernIndex").setConfig(conf)
+				.newGraphDatabase();
+		Node printNode = graphDb.getNodeById(nodeId);
+		if(printNode.getProperty("code")!=null){
+			Utils.print(printNode.getProperty("code").toString());
+		}
+	}
 
 	public static void removeEdge(long id)
 	{
@@ -121,6 +134,8 @@ public class Neo4JDBInterface
 
 		return newNode;
 	}
-	
+	public static void test(){
+//		graphDb.get
+	}
 
 }

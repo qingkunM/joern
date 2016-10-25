@@ -15,7 +15,6 @@ public class ASTNode implements Cloneable
 	protected String codeStr = null;
 	protected ParserRuleContext parseTreeNodeContext;
 	private CodeLocation location = new CodeLocation();
-
 	private boolean isInCFG = false;
 
 	protected LinkedList<ASTNode> children;

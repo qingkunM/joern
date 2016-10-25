@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import ast.ASTNode;
+import ast.declarations.IdentifierDecl;
 import ast.functionDef.FunctionDef;
 import ast.functionDef.Parameter;
 import ast.functionDef.ParameterList;
@@ -15,9 +16,11 @@ import ast.statements.ContinueStatement;
 import ast.statements.DoStatement;
 import ast.statements.ForStatement;
 import ast.statements.GotoStatement;
+import ast.statements.IdentifierDeclStatement;
 import ast.statements.IfStatement;
 import ast.statements.Label;
 import ast.statements.ReturnStatement;
+import ast.statements.Statement;
 import ast.statements.SwitchStatement;
 import ast.statements.ThrowStatement;
 import ast.statements.TryStatement;
@@ -32,6 +35,7 @@ import cfg.nodes.CFGExitNode;
 import cfg.nodes.CFGNode;
 import cfg.nodes.CFGExceptionNode;
 import cfg.nodes.InfiniteForNode;
+import ast.parsePointers.parseFunctionContent;
 
 public class CCFGFactory extends CFGFactory
 {
@@ -44,6 +48,7 @@ public class CCFGFactory extends CFGFactory
 		{
 			CCFG function = newInstance();
 			CCFG parameterBlock = convert(functionDefinition.getParameterList());
+//			new parseFunctionContent().parseFContent(functionDefinition.getContent());
 			CCFG functionBody = convert(functionDefinition.getContent());
 			parameterBlock.appendCFG(functionBody);
 			function.appendCFG(parameterBlock);
@@ -82,6 +87,11 @@ public class CCFGFactory extends CFGFactory
 			CFGNode last = block.getEntryNode();
 			for (ASTNode node : nodes)
 			{
+				//System.out.println(node.getEscapedCodeStr());
+				//just test add by mqk
+//				if (node instanceof IdentifierDecl){
+//					System.out.println("+++++"+((IdentifierDecl)node).getTypeAsString()+"+++++++");
+//				}
 				CFGNode container = new ASTNodeContainer(node);
 				block.addVertex(container);
 				block.addEdge(last, container);

@@ -13,13 +13,14 @@ import org.neo4j.unsafe.batchinsert.BatchInserters;
 import org.neo4j.unsafe.batchinsert.BatchRelationship;
 
 import databaseNodes.NodeKeys;
+import utils.Utils;
 
 public class Neo4JBatchInserter
 {
-
-	static BatchInserter inserter;
-	static BatchInserterIndexProvider indexProvider;
-	static BatchInserterIndex nodeIndex;
+	//原本无public关键字，增加了一个public
+	public static BatchInserter inserter;
+	public static BatchInserterIndexProvider indexProvider;
+	public static BatchInserterIndex nodeIndex;
 
 	static String databaseDirectory = "neo4j-db";
 	static Map<String, String> batchInserterConfig;
@@ -139,6 +140,12 @@ public class Neo4JBatchInserter
 		nodeIndex.setCacheCapacity(NodeKeys.NAME, 100000);
 		nodeIndex.setCacheCapacity(NodeKeys.CODE, 100000);
 
+	}
+	//根据id打印出node code
+	public static void printNodeCode(Long nodeId){
+		Map<String, Object> propMap = inserter.getNodeProperties(nodeId);
+		if(propMap.containsKey("code"))
+			Utils.print(propMap.get("code").toString());
 	}
 
 }

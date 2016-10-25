@@ -5,6 +5,7 @@ import java.util.List;
 
 import misc.Pair;
 import neo4j.readWriteDB.Neo4JDBInterface;
+import utils.Utils;
 
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -38,6 +39,7 @@ public class Traversals
 			Long statementId)
 	{
 		Node node = Neo4JDBInterface.getNodeById(statementId);
+		//这个USE表示的是什么
 		return getIdAndCodeOfChildrenConnectedBy(node, "USE");
 	}
 
@@ -171,7 +173,7 @@ public class Traversals
 
 	// The two following functions are somewhat disgraceful
 	// but should work for now.
-
+	//node是CallExpression节点，此函数的目的功能是找到包含node节点的CFG节点
 	public static Node getStatementForASTNode(Node node)
 	{
 		Node n = node;
@@ -182,6 +184,10 @@ public class Traversals
 
 			try
 			{
+				if(n.hasProperty(NodeKeys.LOCATION)){
+//					Utils.print("location : "+n.getProperty(NodeKeys.LOCATION).toString());
+//					Utils.print("code : "+n.getProperty(NodeKeys.CODE).toString());
+				}
 				Object property = n.getProperty(NodeKeys.IS_CFG_NODE);
 				return n;
 			}
@@ -189,7 +195,7 @@ public class Traversals
 			{
 
 			}
-
+			//获取以n为结束节点的边
 			Iterable<Relationship> rels = n
 					.getRelationships(Direction.INCOMING);
 			for (Relationship rel : rels)

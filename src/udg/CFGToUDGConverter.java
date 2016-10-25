@@ -41,6 +41,7 @@ public class CFGToUDGConverter
 						.getASTNode();
 				ASTNodeASTProvider provider = new ASTNodeASTProvider();
 				provider.setNode(statementNode);
+				//姑且认为是将每个statement使用的symbol通过use和define边连接到statement节点，这就是所谓的udg（use-define-graph）
 				Collection<UseOrDef> usesAndDefs = astAnalyzer
 						.analyzeAST(provider);
 				addToUseDefGraph(useDefGraph, usesAndDefs, statementNode);

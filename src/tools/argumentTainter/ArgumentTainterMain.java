@@ -19,7 +19,7 @@ public class ArgumentTainterMain
 
 		ArgumentTainter argumentTainter = new ArgumentTainter();
 		argumentTainter.initialize(databaseDir);
-
+		//source is the vul function name 
 		argumentTainter.setSourceToPatch(source);
 		argumentTainter.setArgToPatch(taintedArg);
 		argumentTainter.patch();

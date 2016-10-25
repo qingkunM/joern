@@ -12,7 +12,8 @@ import org.neo4j.graphdb.index.IndexHits;
 
 public class ImportedNodeWalker
 {
-	private List<ImportedNodeListener> listeners = new LinkedList<ImportedNodeListener>();
+	//原本为private现改为protected
+	protected List<ImportedNodeListener> listeners = new LinkedList<ImportedNodeListener>();
 	String type = "Function";
 
 	public void addListener(ImportedNodeListener listener)
@@ -27,6 +28,7 @@ public class ImportedNodeWalker
 
 	public void walk()
 	{
+		//获取库中的所有type为callExpression的节点id list，这里的function类型为CallExpression类型
 		IndexHits<Long> nodes = Neo4JBatchInserter.retrieveExactFromIndex(
 				"type", type);
 		for (Long nodeId : nodes)

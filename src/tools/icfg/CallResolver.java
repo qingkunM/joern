@@ -2,6 +2,7 @@ package tools.icfg;
 
 import neo4j.batchInserter.Neo4JBatchInserter;
 import neo4j.traversals.batchInserter.Elementary;
+import utils.Utils;
 
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.unsafe.batchinsert.BatchRelationship;
@@ -14,7 +15,10 @@ public class CallResolver
 
 	public IndexHits<Long> resolveByCallId(long callId)
 	{
+		//获取callee的函数名
 		String calleeString = getCalleeString(callId);
+		//Utils.print(calleeString);
+		//获取functionName="calleeString"的function节点id
 		IndexHits<Long> calleeIds = lookupCallee(calleeString);
 		return calleeIds;
 	}
@@ -73,9 +77,9 @@ public class CallResolver
 	{
 		if (callee.contains(" "))
 			return null;
-
-		String query = "type:\"Function\" AND functionName:\"" + callee + "\"";
-
+		//由functionName改为name
+		String query = "type:\"Function\" AND name:\"" + callee + "\"";
+		//获取的应该是functiondatabaseNode节点的id
 		IndexHits<Long> hits = Neo4JBatchInserter.queryIndex(query);
 
 		return hits;
